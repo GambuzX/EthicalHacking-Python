@@ -65,5 +65,5 @@ except KeyboardInterrupt:
     print("\n[+] Detected CTRL + C ... Resetting ARP tables ... Please wait.")
     restore(target_ip, gateway_ip)
     restore(gateway_ip, target_ip)
+    subprocess.call("echo 0 > /proc/sys/net/ipv4/ip_forward", shell=True)
 
-subprocess.call("echo 0 > /proc/sys/net/ipv4/ip_forward", shell=True)
