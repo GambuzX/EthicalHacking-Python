@@ -1,18 +1,28 @@
 #!/usr/bin/env python
 
-import requests, re
+import requests, re, urlparse
+
+target_url = "https://abertoatedemadrugada.com"
+target_links = []
 
 
-def request(url):
-    try:
-        return requests.get("http://" + url)
-    except requests.exceptions.ConnectionError:
-        pass
+def extract_links_from(url):
+    response = requests.get(url)
+    return re.findall('(?:href=")(.*?)"', response.content)
 
 
-target_url = "bing.com"
+def crawl(url):
+    href_links = extract_links_from(url)
+    for link in href_links:
+        link = urlparse.urljoin(url, link)
 
-response = request(target_url)
-href_links = re.findall('(?:href=")(.*?)"', response.content)
+        if "#" in link:
+            link = link.split("#")[0]
 
-print(href_links)
+        if target_url in link and link not in target_links:
+            target_links.append(link)
+            print(link)
+            crawl(link)
+
+
+crawl(target_url)
