@@ -29,3 +29,6 @@ Repository that contains all the programs I built in Python :snake: while learni
 * spider - maps the whole target website and discovers all files, directories and links.
 * guess_login - runs a wordlist attack to guess login information.
 * vulnerability_scanner - scans a target website for weaknesses and produces a report with all findings.
+
+### Disclaimer
+This repository was used for educational purposes and I do not take any responsibility for anything related to its content. You are free to use any code or algorithm you find, but do so at your own risk. Furthermore, please refrain from doing anything illegal or with ill-intentions.
